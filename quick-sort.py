@@ -2,6 +2,14 @@
 Quick Sort.
 '''
 
+from test import *
+
+def wait():
+    try:
+        input("Press enter to continue")
+    except SyntaxError:
+        pass
+
 def quickSort(a, low, high):
     if low < high:
         pivot = partition(a, low, high)
@@ -14,15 +22,21 @@ def partition(a, low, high):
     leftwall = low
 
     for i in xrange(low+1, high):
+        print "--------------------- a[" + str(i) + "]: " + str(a[i])
+        print "array: " + str(a)
+        print "leftwall: " + str(leftwall)
+        print "pivot: " + str(pivot)
         if a[i] < pivot:
-            a[i], a[leftwall] = a[leftwall], a[i]
-            leftwall = leftwall + 1
+            print "swapping " + str(a[i]) + " <-> " + str(a[leftwall])
+            a[i], a[leftwall] = a[leftwall], a[i]     # swap
+            leftwall += 1
+        wait()
 
-    pivot, a[leftwall] = a[leftwall], pivot
+    pivot, a[leftwall] = a[leftwall], pivot           # swap
 
     return leftwall
 
-a = [6, 5, 4, 3, 2, 1]
+a = [6,3,4,1,5,2]
 
-b = quickSort(a, 0, 6)
+b = quickSort(a, 0, len(a))
 print b
