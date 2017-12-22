@@ -1,157 +1,125 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct {
-  int *array;
-  size_t used;
-  size_t size;
-} Array;
-
-void initArray(Array *a, size_t initialSize) {
-  // printf("initialSize: %zu\n", initialSize);
-  a->array = (int *)malloc(initialSize * sizeof(int));
-  a->used = 0;
-  a->size = initialSize;
-  // printf("a->used: %zu\n", a->used);
-  // printf("a->size: %zu\n", a->size);
-}
-
-void insertArray(Array *a, int element) {
-  // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
-  // Therefore a->used can go up to a->size
-  // printf("inserting element: %d\n", element); 
-  if (a->used == a->size) {
-    a->size *= 2;
-    a->array = (int *)realloc(a->array, a->size * sizeof(int));
-  }
-  a->array[a->used++] = element;
-  // printf("a->used: %zu\n", a->used);
-  // printf("a->size: %zu\n", a->size);
-}
-
-void removeArray(Array *a, Array *b, int element) {
-  // // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
-  // // Therefore a->used can go up to a->size
-  printf("removing element: %d\n", element); 
-  // if (a->used == a->size) {
-  //   a->size *= 2;
-  //   a->array = (int *)realloc(a->array, a->size * sizeof(int));
-  // }
-  // a->array[a->used++] = element;
-  // printf("a->used: %zu\n", a->used);
-  // printf("a->size: %zu\n", a->size);
-
-  initArray(b, a->size - 1);
-  for (int i=0; i<a->size; ++i) {
-    // printf("---%d\n", i);
-    // printf("------%d\n", a->array[i]);
-
-    if (a->array[i] != element) {
-      b->array[b->used++] = a->array[i];
+/* C program for Merge Sort */
+#include<stdlib.h>
+#include<stdio.h>
+ 
+// Merges two subarrays of arr[].
+// First subarray is arr[l..m]
+// Second subarray is arr[m+1..r]
+void merge(int arr[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 =  r - m;
+ 
+    /* create temp arrays */
+    int L[n1], R[n2];
+ 
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1+ j];
+ 
+    /* Merge the temp arrays back into arr[l..r]*/
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
     }
-  }
-
-  // for (int i=0; i<b->size; ++i) {
-  //   printf("---%d\n", i);
-  //   printf("------%d\n", b->array[i]);
-  // }
-  // printf("b->size: %zu\n", b->size);
-  // return b;
+ 
+    /* Copy the remaining elements of L[], if there
+       are any */
+    while (i < n1)
+    {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+ 
+    /* Copy the remaining elements of R[], if there
+       are any */
+    while (j < n2)
+    {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
 }
-
-void freeArray(Array *a) {
-  free(a->array);
-  a->array = NULL;
-  a->used = a->size = 0;
+ 
+/* l is for left index and r is right index of the
+   sub-array of arr to be sorted */
+void mergeSort(int arr[], int l, int r)
+{
+    if (l < r)
+    {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l+(r-l)/2;
+ 
+        // Sort first and second halves
+        mergeSort(arr, l, m);
+        mergeSort(arr, m+1, r);
+ 
+        merge(arr, l, m, r);
+    }
 }
-
-// Array mergeSort(Array a) {
-//   Array a1, a2;
-//   int a1_len, a2_len;
-//   int len = a.size;
-
-//   if (len == 1) {
-//     return a;
-//   }
-
-//   if (len % 2 == 1) {
-//     a1_len = len / 2;
-//     a2_len = len / 2 + 1;
-
-//   } else {
-//     a1_len = a2_len = len / 2;
-//     initArray(&a1, a1_len);
-//     initArray(&a2, a2_len);
-//     for (int i=0; i<len; ++i) {
-//       if (i >= len / 2) {
-//         insertArray(&a2, a.array[i]);
-//       } else
-//         insertArray(&a1, a.array[i]);
-//     }
-//   }
-
-//   Array l = mergeSort(a1);
-//   Array r = mergeSort(a2);
-
-//   return merge(l, r);
-// }
-
-// Array merge(Array l, Array, r) {
-//       c = []
-
-//     while l and r:
-//         if l[0] > r[0]:
-//             c.append(r[0])
-//             r.remove(r[0])
-//         else:
-//             c.append(l[0])
-//             l.remove(l[0])
-
-//     while a:
-//         c.append(l[0])
-//         l.remove(l[0])
-
-//     while r:
-//         c.append(r[0])
-//         r.remove(r[0])
-
-//     return c
-// /////////////////////
-//   Array c;
-
-//   while (l.size != 0 && r.size != 0) {
-//     if (l.array[0] > r.array[0]) {
-//       insertArray(&c, r.array[0]);
-
-//     }
-//   }
-// }
-
-
-int main(int argc, char* argv[]) {
-
-  Array a, b;
-  initArray(&a, 12);
-  initArray(&b, 11);
-  for (int i=12; i>0; --i) { printf("inserting: %d\n", i); insertArray(&a, i); }
-  // for (int i=1; i<13; ++i) { printf("%d\n", a.array[i-1]); }
-
-  printf("a.used: %zu\n", a.used);
-  printf("a.size: %zu\n", a.size);
-  for (int i=1; i<=a.size; ++i) { printf("%d: %d\n", i, a.array[i-1]); }
-  
-  removeArray(&a, &b, 6);
-  freeArray(&a);
-
-  printf("b.used: %zu\n", b.used);
-  printf("b.size: %zu\n", b.size);
-  for (int i=1; i<=b.size; ++i) { printf("%d\n", b.array[i-1]); }
-  // freeArray(&a);
-  // for (int i=1; i<13; ++i) { printf("%d\n", b->array[i-1]); }
-
-  freeArray(&b);
+ 
+/* UTILITY FUNCTIONS */
+/* Function to print an array */
+void printArray(int A[], int size)
+{
+    int i;
+    for (i=0; i < size; i++)
+        printf("%d ", A[i]);
+    printf("\n");
 }
+ 
+/* Driver program to test above functions */
+int main(int argc, char **argv)
+{
+    if (argc > 1) {
+        int arr[argc];
 
-// int main() {
+        printf("argc: %d\n", argc);
+        for (int i=0; i<argc-1; ++i) {
+            char c = *argv[i+1];
+            int x = c - '0';        // Pseudo-cast char to int.
+            arr[i] = x;
+        }
 
-// }
+        int arr_size = sizeof(arr)/sizeof(arr[0]) - sizeof(arr[0]);
+
+        printf("Given array is \n");
+        printArray(arr, arr_size);
+     
+        mergeSort(arr, 1, arr_size - 1);
+     
+        printf("\nSorted array is \n");
+        printArray(arr, arr_size);
+    } else {
+        int arr[] = {12, 11, 13, 5, 6, 7};
+        int arr_size = sizeof(arr)/sizeof(arr[0]);
+     
+        printf("Given array is: ");
+        printArray(arr, arr_size);
+     
+        mergeSort(arr, 0, arr_size - 1);
+     
+        printf("\nSorted array is: ");
+        printArray(arr, arr_size);
+    }
+
+    return 0;
+}

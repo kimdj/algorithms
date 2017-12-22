@@ -1,3 +1,7 @@
+'''
+Merge Sort Implementation.
+'''
+
 import sys
 from test import *
 
@@ -11,8 +15,10 @@ Insert the remaining sorted items into A.
 def merge(L,R):
     A = []                          # Create an empty list.
 
-    #        L     R          A
-    # e.g. [4,5] [3,6]  -->  [ ]
+    '''
+           L     R            A
+         [4,5] [3,6,7]  -->  [ ]
+    '''
 
     while L and R:                  # While L and R are not empty,
         if L[0] > R[0]:             # insert items into the list by order.
@@ -22,8 +28,16 @@ def merge(L,R):
             A.append(L[0])
             L.remove(L[0])
 
-    #       L   R           A
-    # e.g. [ ] [6]  -->  [3,4,5]
+    '''
+           L     R           A
+         [4,5] [6,7]  -->   [3]
+
+           L    R            A
+          [5] [6,7]  -->   [3,4]
+
+           L    R            A
+          [ ] [6,7]  -->  [3,4,5]
+    '''
 
     while L:                        # Either L or R contains remaining sorted items.
         A.append(L[0])              # Insert the remaining sorted items.
@@ -32,15 +46,20 @@ def merge(L,R):
         A.append(R[0])
         R.remove(R[0])
 
-    #       L   R            A
-    # e.g. [ ] [ ]  -->  [3,4,5,6]
+    '''
+           L   R             A
+          [ ] [7]  -->   [3,4,5,6]
+
+           L   R             A
+          [ ] [ ]  -->  [3,4,5,6,7]
+    '''
 
     return A
 
 def mergeSort(A):
     if len(A) <= 1:                             # Base case: a list only contains a single item.
         return A
-    
+
     L = mergeSort(A[0:len(A)/2])                # Keep recursively dividing the list until the base
     R = mergeSort(A[len(A)/2:len(A)])           # case is reached (i.e. a list contains only 1 item).
 
@@ -48,18 +67,20 @@ def mergeSort(A):
 
 '''-------------------------------------------------------------------------------------------------'''
 
-try: a
-except NameError: a = None
+# Set A to None if A isn't already set by test.py.
+A = a
+try: A
+except NameError: A = None
 
 if len(sys.argv) > 1:
-    a = []
+    A = []
     for i in xrange(1, len(sys.argv)):
-        a.append(int(sys.argv[i]))
-elif a is None:
-    a = [5,4,6,3,7,2,8,1,9]
+        A.append(sys.argv[i])
+elif A is None:
+    A = [5,4,6,3,7,2,8,1,9]
 
-print "unsorted a: " + str(a)
-print "  sorted a: " + str(mergeSort(a))
+print "unsorted A: " + str(A)
+print "  sorted A: " + str(mergeSort(A))
 
 '''================================================================================================='''
 
